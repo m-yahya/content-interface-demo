@@ -1,0 +1,38 @@
+name: writer-snap
+base: core18
+version: "0.1dev"
+summary: A test snap to write configuration into a TOML file
+description: |
+  A test snap to write configuration into a TOML file
+
+grade: devel
+confinement: devmode
+
+parts:
+  writer-snap:
+    # See 'snapcraft plugins'
+    source: .
+    plugin: python
+    requirements: ["requirements.txt"]
+
+  writer-snap-data:
+    plugin: dump
+    source: .
+
+  launcher:
+    plugin: nil
+    source: .
+    override-build: |
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp -av writer.sh $SNAPCRAFT_PART_INSTALL/bin/
+
+slots:
+  shared-files:
+    interface: content
+    content: shared-files
+    read:
+      - $SNAP_USER_DATA
+
+apps:
+  writer-snap:
+    command: writer.sh writer-snap
